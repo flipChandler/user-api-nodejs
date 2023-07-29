@@ -1,29 +1,7 @@
 const http = require("http");
-const { UserController } = require("./controllers/user.controller");
+const handler = require("./handlerRoutes");
 
-const userController = new UserController();
-
-
-const server = http.createServer(async (request, response) => {
-
-    const METHOD = request.method;
-    const URL = request.url;
-
-    if (URL.startsWith("/users")) {
-        switch (METHOD) {
-            case "POST":
-                return userController.post(request, response);
-                break;
-            case "GET":
-                return userController.get(request, response);        
-                break;
-            case "PUT":
-                return userController.put(request, response);
-                break;
-        }
-    }
-});
-
+const server = http.createServer(handler);
 
 server.listen(3000, () => console.log("Servidor está rodando!"));
 

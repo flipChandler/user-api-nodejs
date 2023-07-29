@@ -1,4 +1,5 @@
-const UserRepository = require("./user.repository");
+const UserRepository = require("./repositories/user.repository");
+const { createHmac } = require("crypto");
 
 
 class User {
@@ -9,7 +10,13 @@ class User {
     }
 
     async create(body) {
-        return await this.userRepository.create(body);
+        const { password } = body;
+        const pwdEncrypt = createHmac("sha256", password).digest("hex");
+        const user = {
+            ...body,
+            password: pwdEncrypt,
+        };
+        return await this.userRepository.create(user);
     }
 
     async findAll() {
@@ -21,7 +28,14 @@ class User {
         if (!userExists) {
             throw new Error("Usuário não encontrado!");
         }
-        await this.userRepository.update(body, id);
+        const { password } = body;
+        const pwdEncrypt = createHmac("sha256", password).digest("hex");
+        const user = {
+            ...body,
+            password: pwdEncrypt,
+        };
+
+        await this.userRepository.update(user, id);
     }
 }
 

@@ -1,4 +1,4 @@
-const { client } = require("./database");
+const { client } = require("../database");
 const { randomUUID } = require("crypto");
 
 
@@ -8,18 +8,19 @@ class UserRepository {
         this.client = client;
     }
 
-    async create({ name, username, email }) {
+    async create({ name, username, email, password }) {
         const id = randomUUID();
 
         await this.client.query(
-            "INSERT INTO USERS(ID, NAME, USERNAME, EMAIL) VALUES($1, $2, $3, $4)",
-            [id, name, username, email]
+            "INSERT INTO USERS(ID, NAME, USERNAME, EMAIL, PASSWORD) VALUES($1, $2, $3, $4, $5)",
+            [id, name, username, email, password]
         );
         const user = Object.assign({
             id,
             name,
             username,
-            email
+            email, 
+            password
         });
         return user;
     }
@@ -29,10 +30,10 @@ class UserRepository {
         return rows;
     }
 
-    async update({ name, username, email }, id) {
+    async update({ name, username, email, password }, id) {
         const query = 
-            'UPDATE USERS SET NAME = $1, USERNAME = $2, EMAIL = $3 WHERE ID = $4 ';
-        await this.client.query(query, [name, username, email, id])
+            'UPDATE USERS SET NAME = $1, USERNAME = $2, EMAIL = $3, PASSWORD = $4 WHERE ID = $5 ';
+        await this.client.query(query, [name, username, email, password, id])
     }
 
     async findById(id) {
